@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Manifestation Journal — Quantum Visibility Collective</title>
+<meta name="description" content="A luminous manifestation journaling app with the 3-6-9 method, scripting, gratitude, letters to the universe and 5-senses visualization — all saved privately in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<style>
+  :root{
+    /* foundation (original token names kept so existing logic keeps working) */
+    --bg:#19171C; --panel:#231F28; --panel-2:#2C2633; --line:rgba(180,141,232,0.18);
+    --text:#E4E0E8; --muted:#A9A3B0; --gold:#E57CD8;
+    /* per-method accent colors (names kept for the journal's type logic) */
+    --c-369:#E57CD8; --c-script:#7ED9C4; --c-grat:#F4A9DE; --c-letter:#B48DE8; --c-senses:#A47FCB;
+    /* Nikki's Branding Guide palette */
+    --surface:#231F28; --elevated:#2C2633; --divider:#302B36;
+    --orchid:#E57CD8; --lavender:#B48DE8; --mint:#7ED9C4; --violet:#7B4E9F;
+    --rose:#F4A9DE; --violet-ui:#A47FCB;
+    --grad:linear-gradient(120deg,#E57CD8 0%,#B48DE8 55%,#7ED9C4 100%);
+    --grad-btn:linear-gradient(90deg,#E57CD8 0%,#B48DE8 50%,#7ED9C4 100%);
+  }
+  :root[data-theme="light"]{ --bg:#19171C; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#19171C; } }
+  :root[data-theme="dark"]{ --bg:#19171C; }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Montserrat',sans-serif; font-weight:300; line-height:1.7;
+    min-height:100vh; overflow-x:hidden;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(229,124,216,0.10), transparent 42%),
+      radial-gradient(circle at 90% 26%, rgba(126,217,196,0.06), transparent 42%),
+      radial-gradient(circle at 50% 108%, rgba(123,78,159,0.12), transparent 55%);
+    background-attachment:fixed;
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important;} }
+
+  #stars{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+  .star{position:absolute; border-radius:50%; background:#fff; opacity:.5; animation:twinkle 4s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:.12;} 50%{opacity:.6;}}
+
+  .shell{position:relative; z-index:2; max-width:760px; margin:0 auto; padding:40px 22px 88px;}
+
+  .kicker{font-family:'JetBrains Mono',monospace; font-weight:500; text-transform:uppercase; letter-spacing:.28em; font-size:.75rem; color:var(--mint); margin:0 0 14px;}
+  h1.hero{font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.015em; font-size:clamp(2.3rem,8vw,3.4rem); line-height:1.03; margin:0 0 10px;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;}
+  p.tagline{font-family:'Montserrat',sans-serif; font-style:italic; font-weight:400; font-size:1.02rem; color:var(--lavender); margin:0 0 34px;}
+  h2.tab-title{font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.03em; font-size:1.6rem; color:var(--orchid); margin:0 0 8px;}
+  p.tab-sub{font-family:'Montserrat',sans-serif; font-style:italic; font-weight:400; font-size:.98rem; color:var(--muted); margin:0 0 24px;}
+  p.body-copy{font-size:.96rem; line-height:1.75; color:var(--text); margin:0 0 16px;}
+  label.field-label{display:block; font-family:'JetBrains Mono',monospace; font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color:var(--mint); margin:0 0 9px; font-weight:400;}
+
+  /* tabs */
+  .tabs{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:34px; -ms-overflow-style:none; scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    flex:0 0 auto; background:transparent; border:1.5px solid var(--violet-ui); color:var(--body);
+    font-family:'Montserrat',sans-serif; font-weight:500; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase;
+    padding:11px 18px; border-radius:999px; cursor:pointer; white-space:nowrap; transition:all .2s ease;
+  }
+  .tab-btn.active{color:#19171C; border-color:transparent; font-weight:600;}
+  .tab-btn[data-tab="journal"].active{background:var(--grad-btn);}
+  .tab-btn[data-tab="369"].active{background:var(--c-369);}
+  .tab-btn[data-tab="scripting"].active{background:var(--c-script);}
+  .tab-btn[data-tab="gratitude"].active{background:var(--c-grat);}
+  .tab-btn[data-tab="letter"].active{background:var(--c-letter);}
+  .tab-btn[data-tab="senses"].active{background:var(--c-senses);}
+  .tab-btn:hover:not(.active){color:var(--body); border-color:var(--lavender); background:rgba(180,141,232,0.10);}
+
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  textarea, input[type="text"]{
+    width:100%; background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    color:var(--text); font-family:'Montserrat',sans-serif; font-weight:300; font-size:.96rem; line-height:1.6;
+    padding:14px 16px; resize:vertical;
+  }
+  textarea:focus, input[type="text"]:focus{outline:none; border-color:var(--lavender); box-shadow:0 0 0 3px rgba(180,141,232,0.25);}
+  textarea::placeholder, input::placeholder{color:var(--muted);}
+  .field-block{margin-bottom:22px;}
+  .counter{font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--muted); margin-top:7px; letter-spacing:.08em;}
+  .counter.met{color:var(--c-script);}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:none; border-radius:999px;
+    font-family:'Anton',sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.06em; font-size:.98rem;
+    padding:14px 28px; background:var(--grad-btn); color:#19171C;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn:hover{transform:scale(1.03); box-shadow:0 0 32px rgba(229,124,216,0.40);}
+  .btn-outline{background:transparent; border:1.5px solid var(--violet-ui); color:var(--body); font-family:'Montserrat',sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.1em; padding:11px 20px; font-size:.78rem;}
+  .btn-outline:hover{border-color:var(--lavender); background:rgba(180,141,232,0.10); box-shadow:none; transform:none;}
+  .btn-small{padding:9px 16px; font-size:.75rem;}
+  .btn[disabled], .btn-outline[disabled]{opacity:.35; cursor:not-allowed; transform:none; box-shadow:none;}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:6px;}
+
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--elevated); border:1px solid var(--lavender); color:var(--text); font-size:.88rem;
+    padding:13px 24px; border-radius:999px; opacity:0; transition:all .35s ease; z-index:10; pointer-events:none;
+    box-shadow:0 0 30px rgba(180,141,232,0.25);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  /* gratitude rows */
+  .grat-row{display:flex; gap:8px; align-items:center; margin-bottom:10px;}
+  .grat-row input{flex:1;}
+  .icon-btn{background:transparent; border:1.5px solid var(--violet-ui); color:var(--muted); border-radius:10px; width:40px; height:40px; flex:0 0 40px; cursor:pointer; font-size:1.05rem; line-height:1; font-family:'Montserrat',sans-serif;}
+  .icon-btn:hover{color:var(--body); border-color:var(--lavender);}
+
+  /* constellation */
+  .const-wrap{width:100%; height:120px; margin-bottom:28px; position:relative;}
+  .const-wrap svg{width:100%; height:100%;}
+  .const-empty{font-family:'Montserrat',sans-serif; font-style:italic; font-weight:400; font-size:.9rem; color:var(--muted); text-align:center; padding-top:42px;}
+
+  /* journal list */
+  .journal-controls{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-bottom:26px;}
+  .filter-chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{font-family:'JetBrains Mono',monospace; background:transparent; border:1.5px solid var(--violet-ui); color:var(--muted); font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; padding:7px 13px; border-radius:999px; cursor:pointer;}
+  .chip.active{color:#19171C; background:var(--orchid); border-color:transparent; font-weight:500;}
+  .chip:hover:not(.active){border-color:var(--lavender); color:var(--body);}
+
+  .entry-card{background:var(--panel); border:1px solid var(--line); border-left-width:3px; border-radius:16px; padding:20px 22px; margin-bottom:14px; box-shadow:0 0 30px rgba(229,124,216,0.05);}
+  .entry-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; cursor:pointer;}
+  .entry-tag{font-family:'JetBrains Mono',monospace; display:inline-block; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; padding:5px 11px; border-radius:999px; margin-bottom:10px;}
+  .entry-title{font-family:'Anton',sans-serif; font-weight:400; font-size:1.18rem; letter-spacing:.01em; line-height:1.2; color:var(--text); margin:0 0 5px;}
+  .entry-date{font-family:'JetBrains Mono',monospace; font-size:.75rem; letter-spacing:.06em; color:var(--muted);}
+  .entry-chevron{color:var(--lavender); font-size:1.1rem; transition:transform .2s ease; flex:0 0 auto; margin-top:2px;}
+  .entry-body{display:none; margin-top:16px; border-top:1px solid var(--divider); padding-top:16px;}
+  .entry-body.open{display:block;}
+  .entry-field{margin-bottom:14px;}
+  .entry-field .fl{font-family:'JetBrains Mono',monospace; font-size:.75rem; text-transform:uppercase; letter-spacing:.12em; color:var(--mint); margin-bottom:6px;}
+  .entry-field .fv{font-size:.94rem; line-height:1.65; white-space:pre-wrap; color:var(--text);}
+  .entry-actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .entry-actions .btn-outline{padding:8px 14px; font-size:.75rem;}
+  .empty-state{text-align:center; padding:54px 20px; color:var(--muted);}
+  .empty-state p{font-family:'Montserrat',sans-serif; font-size:.9rem; color:var(--muted); margin:0;}
+  .empty-state p:first-child{font-family:'Anton',sans-serif; text-transform:uppercase; letter-spacing:.03em; font-size:1.3rem; color:var(--orchid); margin-bottom:8px;}
+
+  .reset-link{font-family:'JetBrains Mono',monospace; background:none; border:none; color:var(--muted); font-size:.75rem; letter-spacing:.06em; text-decoration:underline; text-underline-offset:3px; cursor:pointer; padding:0; margin-top:32px;}
+  .reset-link:hover{color:var(--body);}
+
+  /* accessibility: visible keyboard focus (brand mint outline) */
+  .tab-btn:focus-visible, .btn:focus-visible, .btn-outline:focus-visible, .chip:focus-visible,
+  .icon-btn:focus-visible, .reset-link:focus-visible, .entry-head:focus-visible,
+  textarea:focus-visible, input[type="text"]:focus-visible{
+    outline:3px solid var(--mint); outline-offset:3px;
+  }
+
+  @media (max-width:480px){
+    h1.hero{font-size:clamp(2rem,10vw,2.6rem);}
+    .journal-controls{flex-direction:column; align-items:flex-start;}
+    .shell{padding:32px 18px 72px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="shell">
+  <div class="kicker">Quantum Visibility Collective</div>
+  <h1 class="hero">Quantum Manifestation Journal</h1>
+  <p class="tagline">Your reality, written before it arrives.</p>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="journal" onclick="switchTab('journal')">Journal</button>
+    <button class="tab-btn" data-tab="369" onclick="switchTab('369')">3&ndash;6&ndash;9 Method</button>
+    <button class="tab-btn" data-tab="scripting" onclick="switchTab('scripting')">Scripting</button>
+    <button class="tab-btn" data-tab="gratitude" onclick="switchTab('gratitude')">Gratitude</button>
+    <button class="tab-btn" data-tab="letter" onclick="switchTab('letter')">Letter to the Universe</button>
+    <button class="tab-btn" data-tab="senses" onclick="switchTab('senses')">5 Senses</button>
+  </div>
+
+  <!-- JOURNAL TAB -->
+  <section class="tab-panel active" id="panel-journal">
+    <h2 class="tab-title">Your journal</h2>
+    <p class="tab-sub">Every entry you've written, saved right here in this browser.</p>
+
+    <div class="const-wrap" id="constellation"></div>
+
+    <div class="journal-controls">
+      <div class="filter-chips" id="filter-chips"></div>
+      <div class="btn-row">
+        <button class="btn-outline btn-small" onclick="downloadAll('docx')">Download all (.docx)</button>
+        <button class="btn-outline btn-small" onclick="downloadAll('txt')">Download all (.txt)</button>
+      </div>
+    </div>
+
+    <div id="entry-list"></div>
+    <button class="reset-link" onclick="clearAllEntries()">clear all saved entries</button>
+  </section>
+
+  <!-- 369 TAB -->
+  <section class="tab-panel" id="panel-369">
+    <h2 class="tab-title">The 3&ndash;6&ndash;9 Method</h2>
+    <p class="tab-sub">State it as already true. Write it until your body believes you.</p>
+    <p class="body-copy">Pick one desire. Write it in the present tense, as if it's already happened. Then write it three times this morning, six times midday, and nine times before bed.</p>
+
+    <div class="field-block">
+      <label class="field-label">Your desire, stated as already true</label>
+      <input type="text" id="i369-desire" placeholder="I am so grateful now that...">
+    </div>
+
+    <div class="field-block">
+      <label class="field-label">Morning &mdash; write it 3 times</label>
+      <textarea id="i369-morning" rows="4" placeholder="Write your desire, one line at a time"></textarea>
+      <div class="counter" id="cnt-morning">0 / 3</div>
+    </div>
+
+    <div class="field-block">
+      <label class="field-label">Midday &mdash; write it 6 times</label>
+      <textarea id="i369-midday" rows="6" placeholder="Write your desire, one line at a time"></textarea>
+      <div class="counter" id="cnt-midday">0 / 6</div>
+    </div>
+
+    <div class="field-block">
+      <label class="field-label">Evening &mdash; write it 9 times</label>
+      <textarea id="i369-evening" rows="8" placeholder="Write your desire, one line at a time"></textarea>
+      <div class="counter" id="cnt-evening">0 / 9</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="save369()">Save entry</button>
+    </div>
+  </section>
+
+  <!-- SCRIPTING TAB -->
+  <section class="tab-panel" id="panel-scripting">
+    <h2 class="tab-title">Scripting: a day in the life</h2>
+    <p class="tab-sub">Write tomorrow as though it already belongs to you.</p>
+
+    <div class="field-block">
+      <label class="field-label">What's the first thing you notice when you wake up in this reality?</label>
+      <textarea id="script-1" rows="3" placeholder="Describe it in present tense, as it's happening"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">Walk through your morning. What are you doing, and how does it feel in your body?</label>
+      <textarea id="script-2" rows="3"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What does your work or business look like today?</label>
+      <textarea id="script-3" rows="3"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">Who is around you, and how do they treat you?</label>
+      <textarea id="script-4" rows="3"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">How does the day end? What are you feeling as you fall asleep?</label>
+      <textarea id="script-5" rows="3"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="saveScripting()">Save entry</button>
+    </div>
+  </section>
+
+  <!-- GRATITUDE TAB -->
+  <section class="tab-panel" id="panel-gratitude">
+    <h2 class="tab-title">Gratitude &amp; already mine</h2>
+    <p class="tab-sub">Thank it before you can prove it. That's the whole practice.</p>
+    <p class="body-copy">Finish the sentence as many times as you want. The feeling of already having it is the point, not the length of the list.</p>
+
+    <div id="grat-rows"></div>
+    <button class="icon-btn" style="width:auto; padding:0 14px;" onclick="addGratRow()">+ add another line</button>
+
+    <div class="btn-row" style="margin-top:22px;">
+      <button class="btn" onclick="saveGratitude()">Save entry</button>
+    </div>
+  </section>
+
+  <!-- LETTER TAB -->
+  <section class="tab-panel" id="panel-letter">
+    <h2 class="tab-title">Letter to the universe</h2>
+    <p class="tab-sub">Ask directly. Release fully. Trust on purpose.</p>
+
+    <div class="field-block">
+      <label class="field-label">What are you asking for?</label>
+      <textarea id="letter-ask" rows="4" placeholder="Dear Universe, I'm asking for..."></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What are you ready to release or let go of?</label>
+      <textarea id="letter-release" rows="4"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What are you choosing to trust, even without proof yet?</label>
+      <textarea id="letter-trust" rows="4"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">Sign it</label>
+      <input type="text" id="letter-sign" placeholder="With full trust,">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="saveLetter()">Save entry</button>
+    </div>
+  </section>
+
+  <!-- SENSES TAB -->
+  <section class="tab-panel" id="panel-senses">
+    <h2 class="tab-title">5 senses visualization</h2>
+    <p class="tab-sub">The body believes what it can feel. Give it something to feel.</p>
+
+    <div class="field-block">
+      <label class="field-label">What do you see?</label>
+      <textarea id="sense-see" rows="2"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What do you hear?</label>
+      <textarea id="sense-hear" rows="2"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What do you feel, in your body and in your emotions?</label>
+      <textarea id="sense-feel" rows="2"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What do you smell?</label>
+      <textarea id="sense-smell" rows="2"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">What do you taste?</label>
+      <textarea id="sense-taste" rows="2"></textarea>
+    </div>
+    <div class="field-block">
+      <label class="field-label">Having lived this moment fully, how do you feel now?</label>
+      <textarea id="sense-now" rows="2"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="saveSenses()">Save entry</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= storage ================= */
+const STORAGE_KEY = 'qmj_entries_v1';
+let storageOk = true;
+
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    storageOk = false;
+    return [];
+  }
+}
+function saveEntries(list){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  }catch(e){
+    showToast("Your browser storage seems full or blocked. This entry may not be saved for next time.");
+  }
+}
+let entries = loadEntries();
+
+/* ================= type meta ================= */
+const TYPE_META = {
+  '369':      {label:'3–6–9 Method', color:'var(--c-369)'},
+  'scripting':{label:'Scripting', color:'var(--c-script)'},
+  'gratitude':{label:'Gratitude', color:'var(--c-grat)'},
+  'letter':   {label:'Letter to the Universe', color:'var(--c-letter)'},
+  'senses':   {label:'5 Senses', color:'var(--c-senses)'}
+};
+let activeFilter = 'all';
+
+/* ================= toast ================= */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================= tabs ================= */
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+name));
+  if(name==='journal'){ renderJournal(); }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= id/date helpers ================= */
+function makeId(){ return 'e'+Date.now()+'-'+Math.random().toString(36).slice(2,8); }
+function nowIso(){ return new Date().toISOString(); }
+function formatDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'});
+}
+
+/* ================= adding entries ================= */
+function addEntry(type, title, fields){
+  const entry = { id:makeId(), type, title, date:nowIso(), fields };
+  entries.unshift(entry);
+  saveEntries(entries);
+  showToast('Saved to your Journal.');
+}
+
+/* ---- 369 ---- */
+function countLines(text){ return text.split('\n').map(l=>l.trim()).filter(Boolean).length; }
+['morning','midday','evening'].forEach(k=>{
+  document.getElementById('i369-'+k).addEventListener('input', ()=>update369Counters());
+});
+function update369Counters(){
+  const req = {morning:3, midday:6, evening:9};
+  ['morning','midday','evening'].forEach(k=>{
+    const n = countLines(document.getElementById('i369-'+k).value);
+    const el = document.getElementById('cnt-'+k);
+    el.textContent = n+' / '+req[k];
+    el.classList.toggle('met', n>=req[k]);
+  });
+}
+function save369(){
+  const desire = document.getElementById('i369-desire').value.trim();
+  const morning = document.getElementById('i369-morning').value.trim();
+  const midday = document.getElementById('i369-midday').value.trim();
+  const evening = document.getElementById('i369-evening').value.trim();
+  if(!desire && !morning && !midday && !evening){ showToast('Write something first.'); return; }
+  const title = '369 Method: ' + (desire ? desire.slice(0,48) : 'Untitled desire');
+  addEntry('369', title, [
+    {label:'Desire', value:desire || '(not filled in)'},
+    {label:'Morning (3x)', value:morning || '(not filled in)'},
+    {label:'Midday (6x)', value:midday || '(not filled in)'},
+    {label:'Evening (9x)', value:evening || '(not filled in)'}
+  ]);
+  ['i369-desire','i369-morning','i369-midday','i369-evening'].forEach(id=>document.getElementById(id).value='');
+  update369Counters();
+}
+
+/* ---- scripting ---- */
+function saveScripting(){
+  const prompts = [
+    ['What’s the first thing you notice when you wake up in this reality?','script-1'],
+    ['Walk through your morning. What are you doing, and how does it feel in your body?','script-2'],
+    ['What does your work or business look like today?','script-3'],
+    ['Who is around you, and how do they treat you?','script-4'],
+    ['How does the day end? What are you feeling as you fall asleep?','script-5']
+  ];
+  const values = prompts.map(([label,id])=>document.getElementById(id).value.trim());
+  if(values.every(v=>!v)){ showToast('Write something first.'); return; }
+  const fields = prompts.map(([label,id],i)=>({label, value: values[i] || '(not filled in)'}));
+  addEntry('scripting', 'A Day in the Life of Future You', fields);
+  prompts.forEach(([label,id])=>document.getElementById(id).value='');
+}
+
+/* ---- gratitude ---- */
+function addGratRow(value){
+  const wrap = document.getElementById('grat-rows');
+  const row = document.createElement('div');
+  row.className='grat-row';
+  const input = document.createElement('input');
+  input.type='text';
+  input.placeholder='I am so happy and grateful now that...';
+  input.value = value || '';
+  const del = document.createElement('button');
+  del.className='icon-btn';
+  del.innerHTML='&times;';
+  del.type='button';
+  del.onclick=()=>row.remove();
+  row.appendChild(input);
+  row.appendChild(del);
+  wrap.appendChild(row);
+}
+function resetGratRows(){
+  document.getElementById('grat-rows').innerHTML='';
+  for(let i=0;i<3;i++) addGratRow();
+}
+resetGratRows();
+function saveGratitude(){
+  const inputs = document.querySelectorAll('#grat-rows input');
+  const vals = Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  if(vals.length===0){ showToast('Write at least one line first.'); return; }
+  const fields = vals.map((v,i)=>({label:'Statement '+(i+1), value:v}));
+  addEntry('gratitude', 'Gratitude Log ('+vals.length+' statement'+(vals.length>1?'s':'')+')', fields);
+  resetGratRows();
+}
+
+/* ---- letter ---- */
+function saveLetter(){
+  const ask = document.getElementById('letter-ask').value.trim();
+  const release = document.getElementById('letter-release').value.trim();
+  const trust = document.getElementById('letter-trust').value.trim();
+  const sign = document.getElementById('letter-sign').value.trim();
+  if(!ask && !release && !trust){ showToast('Write something first.'); return; }
+  addEntry('letter', 'Letter to the Universe', [
+    {label:'Asking for', value: ask || '(not filled in)'},
+    {label:'Releasing', value: release || '(not filled in)'},
+    {label:'Trusting', value: trust || '(not filled in)'},
+    {label:'Signed', value: sign || '(not signed)'}
+  ]);
+  ['letter-ask','letter-release','letter-trust','letter-sign'].forEach(id=>document.getElementById(id).value='');
+}
+
+/* ---- senses ---- */
+function saveSenses(){
+  const fieldsDef = [
+    ['See','sense-see'],['Hear','sense-hear'],['Feel','sense-feel'],
+    ['Smell','sense-smell'],['Taste','sense-taste'],['How you feel now','sense-now']
+  ];
+  const values = fieldsDef.map(([l,id])=>document.getElementById(id).value.trim());
+  if(values.every(v=>!v)){ showToast('Write something first.'); return; }
+  const fields = fieldsDef.map(([label,id],i)=>({label, value: values[i] || '(not filled in)'}));
+  addEntry('senses', '5 Senses Visualization', fields);
+  fieldsDef.forEach(([l,id])=>document.getElementById(id).value='');
+}
+
+/* ================= journal rendering ================= */
+function renderFilterChips(){
+  const wrap = document.getElementById('filter-chips');
+  wrap.innerHTML='';
+  const types = ['all', ...Object.keys(TYPE_META)];
+  types.forEach(t=>{
+    const chip = document.createElement('button');
+    chip.className='chip'+(activeFilter===t?' active':'');
+    chip.textContent = t==='all' ? 'All' : TYPE_META[t].label;
+    chip.onclick=()=>{ activeFilter=t; renderJournal(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function renderConstellation(){
+  const wrap = document.getElementById('constellation');
+  wrap.innerHTML='';
+  if(entries.length===0){
+    wrap.innerHTML = '<div class="const-empty">Your constellation begins with your first entry.</div>';
+    return;
+  }
+  const ordered = [...entries].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const w = 600, h = 110;
+  const pts = ordered.map((e,i)=>{
+    const seed = hashStr(e.id);
+    const x = ordered.length>1 ? (i/(ordered.length-1))*(w-40)+20 : w/2;
+    const y = 20 + (seed % 70);
+    return {x,y,type:e.type};
+  });
+  let svg = '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none">';
+  for(let i=0;i<pts.length-1;i++){
+    svg += '<line x1="'+pts[i].x+'" y1="'+pts[i].y+'" x2="'+pts[i+1].x+'" y2="'+pts[i+1].y+'" stroke="rgba(180,141,232,0.30)" stroke-width="1"/>';
+  }
+  pts.forEach(p=>{
+    const color = TYPE_META[p.type] ? TYPE_META[p.type].color.replace('var(--','').replace(')','') : 'gold';
+    const resolved = getCssVar(TYPE_META[p.type] ? TYPE_META[p.type].color : '--gold');
+    svg += '<circle cx="'+p.x+'" cy="'+p.y+'" r="4" fill="'+resolved+'" opacity="0.9"/>';
+  });
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+function getCssVar(varExpr){
+  const name = varExpr.replace('var(','').replace(')','');
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#E57CD8';
+}
+function hashStr(s){
+  let h=0;
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) >>> 0; }
+  return h % 100;
+}
+
+function renderJournal(){
+  renderFilterChips();
+  renderConstellation();
+  const list = document.getElementById('entry-list');
+  list.innerHTML='';
+  const filtered = activeFilter==='all' ? entries : entries.filter(e=>e.type===activeFilter);
+
+  const hasAny = entries.length>0;
+  document.querySelectorAll('.journal-controls .btn-outline').forEach(b=>b.disabled = !hasAny);
+
+  if(filtered.length===0){
+    list.innerHTML = '<div class="empty-state"><p>Nothing here yet.</p><p style="font-family:Montserrat,sans-serif; font-style:normal; font-size:.85rem;">Pick a method above and write your first entry.</p></div>';
+    return;
+  }
+
+  filtered.forEach(entry=>{
+    const meta = TYPE_META[entry.type] || {label:entry.type, color:'var(--gold)'};
+    const card = document.createElement('div');
+    card.className='entry-card';
+    card.style.borderLeftColor = getCssVar(meta.color);
+    card.innerHTML = `
+      <div class="entry-head" onclick="toggleEntry('${entry.id}')">
+        <div>
+          <span class="entry-tag" style="background:${getCssVar(meta.color)}22; color:${getCssVar(meta.color)};">${meta.label}</span>
+          <div class="entry-title">${escapeHtml(entry.title)}</div>
+          <div class="entry-date">${formatDate(entry.date)}</div>
+        </div>
+        <div class="entry-chevron" id="chev-${entry.id}">&#9662;</div>
+      </div>
+      <div class="entry-body" id="body-${entry.id}">
+        ${entry.fields.map(f=>`
+          <div class="entry-field">
+            <div class="fl">${escapeHtml(f.label)}</div>
+            <div class="fv">${escapeHtml(f.value)}</div>
+          </div>`).join('')}
+        <div class="entry-actions">
+          <button class="btn-outline" onclick="event.stopPropagation(); downloadEntry('${entry.id}','docx')">Download .docx</button>
+          <button class="btn-outline" onclick="event.stopPropagation(); downloadEntry('${entry.id}','txt')">Download .txt</button>
+          <button class="btn-outline" onclick="event.stopPropagation(); deleteEntry('${entry.id}')">Delete</button>
+        </div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function toggleEntry(id){
+  const body = document.getElementById('body-'+id);
+  const chev = document.getElementById('chev-'+id);
+  const open = body.classList.toggle('open');
+  chev.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function deleteEntry(id){
+  if(!confirm('Delete this entry? This can\'t be undone.')) return;
+  entries = entries.filter(e=>e.id!==id);
+  saveEntries(entries);
+  renderJournal();
+  showToast('Entry deleted.');
+}
+
+function clearAllEntries(){
+  if(entries.length===0) return;
+  if(!confirm('Delete every saved entry in this journal? This can\'t be undone.')) return;
+  entries = [];
+  saveEntries(entries);
+  renderJournal();
+  showToast('Journal cleared.');
+}
+
+function escapeHtml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ================= exports ================= */
+function escapeXml(str){
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+}
+function textToParagraphsXml(text, bold){
+  const lines = String(text).split('\n');
+  return lines.map(line=>{
+    const runProps = bold ? '<w:rPr><w:b/></w:rPr>' : '';
+    return '<w:p><w:r>'+runProps+'<w:t xml:space="preserve">'+escapeXml(line)+'</w:t></w:r></w:p>';
+  }).join('');
+}
+function entryToDocxBodyXml(entry){
+  const meta = TYPE_META[entry.type] || {label:entry.type};
+  let xml = '';
+  xml += textToParagraphsXml(entry.title, true);
+  xml += textToParagraphsXml(meta.label + '  |  ' + formatDate(entry.date), false);
+  xml += '<w:p><w:r><w:t></w:t></w:r></w:p>';
+  entry.fields.forEach(f=>{
+    xml += textToParagraphsXml(f.label, true);
+    xml += textToParagraphsXml(f.value, false);
+    xml += '<w:p><w:r><w:t></w:t></w:r></w:p>';
+  });
+  return xml;
+}
+async function buildDocxBlob(entriesToExport){
+  if(typeof JSZip === 'undefined'){ return null; }
+  const CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+    '<Default Extension="xml" ContentType="application/xml"/>'+
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'+
+    '</Types>';
+  const RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'+
+    '</Relationships>';
+
+  let bodyXml = '';
+  entriesToExport.forEach((entry,i)=>{
+    if(i>0){ bodyXml += '<w:p><w:r><w:br w:type="page"/></w:r></w:p>'; }
+    bodyXml += entryToDocxBodyXml(entry);
+  });
+  const sectPr = '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr>';
+  const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+    bodyXml + sectPr + '</w:body></w:document>';
+
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', CONTENT_TYPES);
+  zip.file('_rels/.rels', RELS);
+  zip.file('word/document.xml', documentXml);
+  return await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+function entryToTxt(entry){
+  const meta = TYPE_META[entry.type] || {label:entry.type};
+  let out = entry.title + '\n' + meta.label + '  |  ' + formatDate(entry.date) + '\n\n';
+  entry.fields.forEach(f=>{ out += f.label+':\n'+f.value+'\n\n'; });
+  return out;
+}
+function slugify(str){
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,40) || 'entry';
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 150);
+}
+async function downloadEntry(id, format){
+  const entry = entries.find(e=>e.id===id);
+  if(!entry) return;
+  if(format==='txt'){
+    const blob = new Blob([entryToTxt(entry)], {type:'text/plain;charset=utf-8'});
+    downloadBlob(blob, slugify(entry.title)+'.txt');
+  } else {
+    const blob = await buildDocxBlob([entry]);
+    if(!blob){
+      showToast('The .docx tool didn\'t load, downloading as .txt instead.');
+      const tblob = new Blob([entryToTxt(entry)], {type:'text/plain;charset=utf-8'});
+      downloadBlob(tblob, slugify(entry.title)+'.txt');
+      return;
+    }
+    downloadBlob(blob, slugify(entry.title)+'.docx');
+  }
+}
+async function downloadAll(format){
+  if(entries.length===0){ showToast('No entries yet.'); return; }
+  const ordered = [...entries].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  if(format==='txt'){
+    const all = ordered.map(entryToTxt).join('\n----------------------------------------\n\n');
+    const blob = new Blob([all], {type:'text/plain;charset=utf-8'});
+    downloadBlob(blob, 'quantum-manifestation-journal.txt');
+  } else {
+    const blob = await buildDocxBlob(ordered);
+    if(!blob){
+      showToast('The .docx tool didn\'t load, downloading as .txt instead.');
+      const all = ordered.map(entryToTxt).join('\n----------------------------------------\n\n');
+      const tblob = new Blob([all], {type:'text/plain;charset=utf-8'});
+      downloadBlob(tblob, 'quantum-manifestation-journal.txt');
+      return;
+    }
+    downloadBlob(blob, 'quantum-manifestation-journal.docx');
+  }
+}
+
+/* ================= boot ================= */
+(function buildStars(){
+  const wrap = document.getElementById('stars');
+  for(let i=0;i<46;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const size = Math.random()*2+1;
+    s.style.width=size+'px'; s.style.height=size+'px';
+    s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*4)+'s';
+    s.style.animationDuration=(3+Math.random()*3)+'s';
+    wrap.appendChild(s);
+  }
+})();
+update369Counters();
+renderJournal();
+if(!storageOk){ showToast('Your browser storage seems unavailable. Entries won\'t be saved between visits.'); }
+</script>
+</body>
+</html>
