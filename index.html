@@ -1,3 +1,4 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,6 +199,49 @@
     #panel-369 > :not(.field-block), #panel-369 > .field-block:first-of-type{grid-column:1 / -1;}
     #panel-369 textarea{min-height:260px;}
   }
+
+  /* ===== QUANTUM SELF LETTER tab (added) ===== */
+  .tab-btn[data-tab="qsl"].active{background:var(--dream-blue);}
+
+  .qsl-progress{position:sticky; top:0; z-index:5; background:rgba(18,18,28,0.95); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); padding:12px 0 14px; margin:0 0 28px; border-bottom:1px solid var(--line);}
+  .qsl-prog-top{display:flex; justify-content:space-between; gap:4px 16px; flex-wrap:wrap; font-family:'Montserrat',sans-serif; font-weight:500; font-size:12px; letter-spacing:2.5px; text-transform:uppercase; line-height:1.6; color:var(--periwinkle); margin-bottom:8px;}
+  .qsl-bar{height:6px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden;}
+  .qsl-bar-fill{height:100%; width:0; border-radius:999px; background:var(--signature); background-size:200% 100%; transition:width .35s ease;}
+
+  .qsl-banner{background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-left:3px solid var(--quantum-green); border-radius:16px; padding:20px 22px; margin:0 0 32px;}
+  .qsl-banner:empty{display:none;}
+  .qsl-banner .bt{font-family:'DM Serif Display',serif; font-size:1.3rem; line-height:1.3; color:var(--orchid); margin:0 0 6px;}
+  .qsl-banner .bp{margin:0 0 14px; font-size:14px; line-height:1.8; color:var(--periwinkle);}
+
+  .qsl-letter{max-width:72ch;}
+  .qsl-title{font-family:'DM Serif Display',serif; font-weight:400; font-size:clamp(1.5rem,4vw,1.95rem); line-height:1.2; letter-spacing:.5px; color:var(--orchid); margin:0 0 18px;}
+  .qsl-ins{margin:0 0 30px; font-size:14px; line-height:1.85; color:var(--periwinkle);}
+  .qsl-ins strong{font-weight:500; color:var(--magenta);}
+  .qsl-sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:46px 0 16px; padding-top:28px; border-top:1px solid var(--line);}
+  .qsl-sec-head h3{font-family:'DM Serif Display',serif; font-style:italic; font-weight:400; font-size:clamp(1.3rem,3.6vw,1.65rem); line-height:1.25; color:var(--lavender); margin:0;}
+  .qsl-sec-count{font-family:'Montserrat',sans-serif; font-weight:500; font-size:12px; letter-spacing:3px; color:var(--periwinkle); white-space:nowrap;}
+  .qsl-sec-count.met{color:var(--quantum-green);}
+  .qsl-p{margin:0 0 22px; font-size:16px; line-height:2.25; color:var(--text);}
+  .qsl-i{font-family:'DM Serif Display',serif; font-style:italic; font-size:1.12rem; line-height:1.9; color:var(--orchid);}
+
+  /* the fill-in-the-blank boxes: small until you need more room, then they grow as you type */
+  .qsl-blank{display:inline-block; min-width:9ch; max-width:100%; margin:2px 1px; padding:0 10px; vertical-align:baseline;
+    background:rgba(185,186,253,0.08); border:1px dashed rgba(185,186,253,0.45); border-radius:10px;
+    font-family:'Montserrat',sans-serif; font-weight:400; font-size:15px; line-height:1.75; color:var(--aqua);
+    white-space:pre-wrap; word-break:break-word; cursor:text; transition:border-color .2s ease, background .2s ease;}
+  .qsl-blank:empty::before{content:"[" attr(data-hint) "]"; color:#9A94B8; font-style:italic; font-size:13.5px; pointer-events:none;}
+  .qsl-blank:not(:empty){border-style:solid; border-color:rgba(74,237,254,0.35); background:rgba(74,237,254,0.07);}
+  .qsl-blank:focus{outline:none; border-color:var(--lavender); background:rgba(188,153,250,0.14);}
+  .qsl-blank:focus-visible{outline:2px solid var(--aqua); outline-offset:2px;}
+
+  /* locked = the finished letter, reading like plain prose */
+  .qsl-letter.locked .qsl-blank{display:inline; margin:0; padding:0; border:none; border-radius:0; background:none; cursor:default; color:var(--text); font-size:inherit; font-weight:500; line-height:inherit;}
+  .qsl-letter.locked .qsl-blank:focus-visible{outline:none;}
+
+  @media (max-width:480px){
+    .qsl-p{font-size:15.5px;}
+    .qsl-banner{padding:18px 16px;}
+  }
 </style>
 </head>
 <body>
@@ -216,6 +260,7 @@
     <button class="tab-btn" data-tab="gratitude" onclick="switchTab('gratitude')">Gratitude</button>
     <button class="tab-btn" data-tab="letter" onclick="switchTab('letter')">Letter to the Universe</button>
     <button class="tab-btn" data-tab="senses" onclick="switchTab('senses')">5 Senses</button>
+    <button class="tab-btn" data-tab="qsl" onclick="switchTab('qsl')">Quantum Self Letter</button>
   </div>
 
   <!-- JOURNAL TAB -->
@@ -376,6 +421,24 @@
     <div class="btn-row">
       <button class="btn" onclick="saveSenses()">Save entry</button>
     </div>
+  </section>
+
+  <!-- QUANTUM SELF LETTER TAB -->
+  <section class="tab-panel" id="panel-qsl">
+    <h2 class="tab-title">Quantum Self letter</h2>
+    <p class="tab-sub">Write her as if she already exists. Every answer saves as you type.</p>
+    <p class="body-copy">Fill each bracket in the present tense. The boxes stay small until you need more room, then grow with you. When every blank is filled, finish your letter to lock it in as your completed Quantum Self Letter. It stays exactly as you wrote it until you choose to edit it.</p>
+
+    <div class="qsl-progress">
+      <div class="qsl-prog-top"><span id="qsl-prog-text">0 of 0 blanks filled</span><span id="qsl-saved">Saves automatically</span></div>
+      <div class="qsl-bar"><div class="qsl-bar-fill" id="qsl-bar-fill"></div></div>
+    </div>
+
+    <div class="qsl-banner" id="qsl-banner"></div>
+
+    <div class="qsl-letter" id="qsl-letter"></div>
+
+    <button class="reset-link" onclick="qslReset()">clear my letter and start over</button>
   </section>
 
 </div>
@@ -788,6 +851,449 @@ async function downloadAll(format){
   }
 }
 
+/* ================= QUANTUM SELF LETTER (added tab) ================= */
+const QSL_KEY = 'qmj_qsl_v1';
+/* template markup: "#T " title, "## " section heading, "! " instructions, "~ " italic line, {{hint}} = fill-in blank */
+const QSL_SRC = `
+#T LETTER FROM YOUR FUTURE VISIBLE SELF
+! Fill in each blank to create a comprehensive vision of who you're becoming. Write in present tense as if your future self is describing their current reality. Imagine that you have fully moved through your fear of being seen. You are visible, expressed, connected, and surrounded by a thriving community that genuinely wants to hear what you have to say.
+~ Dear Past Nikki,
+I'm writing this from my beautiful office that I now have on a Sunday morning. It's 11:30am and I just finished a meditation and fascia session to help ground me and make it easier to think clearly (which is really helpful by the way!).
+I wanted you to know that everything you're working toward becomes real. The person you're trying to become? I'm living as that person now. And the thing that once felt so frightening — being truly seen — has become one of the greatest sources of freedom, connection, and purpose in my life.
+## WHO I AM
+People know me as {{how others describe you now that you are confident, visible, and authentic}}. When they introduce me, they say {{what people say when introducing you and your work}}.
+My work focuses on {{the transformation, message, or area you are passionate about}}. I help {{specific type of person}} move from {{where they are now}} to {{specific outcome}} by {{your unique approach}}.
+What makes me different is {{your unique combination of gifts, perspective, personality, knowledge, and experience}}. While others focus on {{what others in your space tend to focus on}}, I approach it through {{your distinctive angle or philosophy}}.
+I no longer hide the parts of myself that make me different. The parts of me I once worried would make people judge me are now {{how those qualities contribute to your visibility, message, or community}}.
+## HOW I LOOK AND PRESENT MYSELF
+When you see me now, the first thing you notice is {{most obvious change in how you carry or express yourself}}. I dress {{style}} because it reflects {{what your style communicates about who you are}}.
+My energy is {{calm, vibrant, grounded, magnetic, confident}} and people often comment that I seem {{how others perceive you now}}.
+I take care of my body by {{health/self-care routine}} and it shows in {{visible results}}.
+I carry myself {{posture, confidence, presence}} because I know {{belief that creates this presence}}.
+When I speak, post, teach, create, or share, I no longer {{old behaviour caused by fear of being seen}}. Instead, I {{new visible behaviour}}.
+## MY DAILY REALITY
+A typical day starts at {{time}} with {{first activity}}. This sets the tone because {{why this matters}}.
+My work and visibility schedule is {{structure}}. I typically spend my time {{content creation, teaching, connecting, creating, community building, etc.}}.
+I regularly show up publicly by {{ways you express yourself and share your work}}. I feel comfortable being seen doing this because {{what you now understand about visibility}}.
+The best part is {{what energizes you most about being visible and connected to others}}.
+I stop working at {{time}} because {{value this protects}}. My evenings are for {{evening activities}}.
+I live in {{environment}} that reflects {{values}}. My workspace is {{description}} because {{how it supports creativity, expression, consistency, and connection}}.
+## MY COMMUNITY AND SOCIAL CIRCLE
+I'm surrounded by people who {{qualities of the people you want around you}}. My closest relationships are with {{types of people}} who understand {{what they appreciate or understand about you}}.
+My community is made up of people who {{shared values, interests, goals, or qualities}}. They come together because {{what your community gives them that they cannot easily find elsewhere}}.
+People feel {{emotion/experience}} when they enter my community because {{what makes the space feel safe, welcoming, inspiring, or transformative}}.
+In conversations, I'm known for {{communication style}}. People come to me when {{what others seek from you}}.
+I create connection by {{how you engage, facilitate, listen, teach, encourage, or bring people together}}.
+I've built relationships based on {{qualities such as trust, honesty, reciprocity, vulnerability}} rather than {{old pattern or relationship dynamic you no longer accept}}.
+I've set boundaries around {{what you no longer tolerate}} and it's freed me to {{what this enables}}.
+My family/partner/friends see me as {{how loved ones view you now}} which is different from before when they saw me as {{how you used to be perceived}}.
+## MY VALUES IN ACTION
+Every decision I make is guided by {{value #1}}, {{value #2}}, and {{value #3}}.
+When faced with difficult choices about visibility, business, relationships, or my community, I ask myself {{decision criteria}} and the answer becomes clear.
+I no longer {{visibility-related behaviour you have eliminated}} because it conflicts with {{value}}.
+Instead, when that situation arises, I {{new behaviour}}.
+I no longer make myself smaller by {{specific way you used to hide, shrink, overthink, or seek approval}}.
+The thing I'm most proud of is that I never compromise on {{non-negotiable}} even when {{tempting situation}}.
+## MY BUSINESS AND FINANCIAL REALITY
+My business generates {{revenue}} primarily through {{income sources/offers}}.
+What's most satisfying is that this money comes from {{type of value creation}} and allows me to {{what financial freedom makes possible}}.
+I price my work at {{pricing level}} because {{belief about value}}.
+Clients/customers/members invest gladly because {{unique value and transformation you provide}}.
+My business model is {{structure}} and it works perfectly for my lifestyle because {{how it supports your freedom, creativity, energy, and relationships}}.
+I work with {{number}} clients/customers/members at a time doing {{type of work}}.
+They're typically {{ideal community member/client}} facing {{problem, fear, desire, or transformation you help with}}.
+My community has grown to {{number}} people who {{what makes these people engaged and connected}}.
+My marketing is simply {{how you attract people}} because people can clearly see {{what's obvious about your message, personality, expertise, or transformation}}.
+I no longer wait until everything is perfect before sharing. I allow myself to be seen while {{what you're still learning, creating, or becoming}}.
+## MY IMPACT AND LEGACY
+The change I'm creating in the world is {{your impact}}.
+People who encounter my work typically {{common transformation}}.
+People in my community tell me that being part of it has helped them {{specific changes or outcomes}}.
+I'm building something that will outlast me: {{legacy project/community/business/movement}}.
+It matters because {{why this needs to exist}}.
+In my industry/community, I'm known for {{reputation}}.
+When people think of {{your expertise/message}}, my name comes up because {{what you're recognized for}}.
+The stories people tell about me are {{what kind of stories you want people to tell about your courage, visibility, impact, and community}}.
+## WHAT I'VE LEARNED ABOUT BEING SEEN
+The biggest insight I gained was {{major realization about visibility, judgement, authenticity, or self-expression}}.
+This changed how I {{what shifted in your behaviour}}.
+I wish I had known earlier that {{wisdom about being seen}}.
+It would have saved me from {{struggle you could have avoided}}.
+The fear you're carrying about {{current fear of being seen}} turns out to be {{what the fear actually represents or how it resolves}}.
+What actually happens is {{reality vs. what you imagined would happen}}.
+The thing you think is impossible, {{current limitation around visibility/community}}, becomes {{how it unfolds}}.
+I finally understand that being visible doesn't mean {{old definition of visibility}} — it means {{your new definition of visibility}}.
+## MY GROWTH AND EVOLUTION
+I'm still learning and growing in {{areas of development}}.
+Next, I'm working on {{next-level visibility, community, or business goals}}.
+What surprises people is that I {{unexpected trait or behaviour}}.
+Even I'm amazed that I now {{something you can do that seems impossible now}}.
+The old version of me used to {{old behaviour}} but now I {{new behaviour}} because {{what shifted internally}}.
+I measure success by {{how you define winning}} rather than {{old metrics such as likes, followers, approval, or perfection}}.
+I know I'm becoming more visible when {{internal or external evidence}}.
+I know my community is thriving when {{signs of genuine connection, participation, belonging, and transformation}}.
+## MY MESSAGE TO YOU
+The journey from where you are to where I am happens through {{process}}.
+The most important thing is {{key principle}}.
+Stop waiting for {{thing you think you need before you can be visible}}.
+You're ready now to {{action you can take}}.
+Stop trying to guarantee that everyone will understand, approve of, or like you. Trust that {{encouragement about being authentic and finding your people}}.
+Trust that {{encouragement}}.
+The person you're becoming is not only possible, it's inevitable if you {{key commitment}}.
+Remember: every day you choose {{daily choice}}, you're choosing me.
+Every time you {{specific behaviour that demonstrates visibility}}, you're becoming who I am now.
+Every time you allow yourself to be {{quality such as vulnerable, honest, imperfect, expressive, bold}}, you make it easier for the right people to find you.
+## YOUR NEXT STEPS
+This week, start by {{immediate visibility action}}.
+It seems small, but it's actually {{how it compounds}}.
+This month, commit to {{monthly visibility/community commitment}}.
+This will {{result}}.
+This quarter, the big shift to make is {{quarterly visibility, business, or community goal}}.
+When you do this, you'll notice {{evidence that you are becoming more visible and your community is growing}}.
+Remember: you don't have to become fearless before you become visible.
+You only have to be willing to {{what you are willing to practise despite fear}}.
+I'm proud of who you're becoming. Keep going.
+~ With love and certainty,
+~ Your Future Self
+{{signature/name}}
+`;
+
+const QSL_BLOCKS = [];
+const QSL_SECTIONS = [];   /* {title, ids:[]} */
+let QSL_TOTAL = 0;
+(function qslParse(){
+  let sec = null;
+  QSL_SRC.split('\n').forEach(raw=>{
+    const line = raw.trim();
+    if(!line) return;
+    let type = 'p', text = line;
+    if(line.startsWith('#T ')){ type='title'; text=line.slice(3); }
+    else if(line.startsWith('## ')){ type='h'; text=line.slice(3); sec={title:text, ids:[]}; QSL_SECTIONS.push(sec); }
+    else if(line.startsWith('! ')){ type='ins'; text=line.slice(2); }
+    else if(line.startsWith('~ ')){ type='i'; text=line.slice(2); }
+    const parts = [];
+    const re = /\{\{([^}]+)\}\}/g;
+    let last = 0, m;
+    while((m = re.exec(text))){
+      if(m.index > last) parts.push(text.slice(last, m.index));
+      const f = {id:QSL_TOTAL++, hint:m[1]};
+      parts.push(f);
+      if(sec && type!=='h') sec.ids.push(f.id);
+      last = re.lastIndex;
+    }
+    if(last < text.length) parts.push(text.slice(last));
+    QSL_BLOCKS.push({type, parts, sec: (type==='h' ? QSL_SECTIONS.length-1 : null)});
+  });
+})();
+
+/* ---- state + storage (its own key; never touches the journal entries) ---- */
+let qsl = {v:{}, locked:false, done:false, updated:null};
+let qslSaveTimer = null, qslDirty = false, qslToastShown = false, qslBannerKey = '';
+
+function qslLoad(){
+  try{
+    const raw = localStorage.getItem(QSL_KEY);
+    if(!raw) return;
+    const o = JSON.parse(raw);
+    if(o && typeof o === 'object'){
+      qsl.v = (o.v && typeof o.v === 'object') ? o.v : {};
+      qsl.locked = !!o.locked;
+      qsl.done = !!o.done;
+      qsl.updated = o.updated || null;
+    }
+  }catch(e){}
+}
+function qslSavedLabel(ok){
+  const el = document.getElementById('qsl-saved');
+  if(!el) return;
+  if(!ok){ el.textContent = 'Not saved. Storage unavailable'; return; }
+  el.textContent = qsl.updated
+    ? 'Saved ' + new Date(qsl.updated).toLocaleTimeString(undefined, {hour:'numeric', minute:'2-digit'})
+    : 'Saves automatically';
+}
+function qslPersist(){
+  clearTimeout(qslSaveTimer);
+  qslDirty = false;
+  qsl.updated = nowIso();
+  try{
+    localStorage.setItem(QSL_KEY, JSON.stringify(qsl));
+    qslSavedLabel(true);
+  }catch(e){
+    qslSavedLabel(false);
+    if(!qslToastShown){ qslToastShown = true; showToast('Your browser storage seems full or blocked. Your letter may not be saved for next time.'); }
+  }
+}
+function qslQueueSave(){
+  qslDirty = true;
+  clearTimeout(qslSaveTimer);
+  qslSaveTimer = setTimeout(qslPersist, 300);
+}
+function qslVal(i){ return String(qsl.v[i] || '').replace(/\s+/g,' ').trim(); }
+function qslFilled(){
+  let n = 0;
+  for(let i=0;i<QSL_TOTAL;i++){ if(qslVal(i)) n++; }
+  return n;
+}
+
+/* ---- build the letter ---- */
+function qslBuild(){
+  const wrap = document.getElementById('qsl-letter');
+  wrap.innerHTML = '';
+  QSL_BLOCKS.forEach(b=>{
+    let el;
+    if(b.type === 'title'){
+      el = document.createElement('h3'); el.className = 'qsl-title';
+      el.textContent = b.parts.join('');
+    } else if(b.type === 'h'){
+      el = document.createElement('div'); el.className = 'qsl-sec-head';
+      const h = document.createElement('h3'); h.textContent = b.parts.join('');
+      const c = document.createElement('span'); c.className = 'qsl-sec-count'; c.id = 'qsl-sec-' + b.sec;
+      el.appendChild(h); el.appendChild(c);
+    } else {
+      el = document.createElement('p');
+      el.className = 'qsl-p' + (b.type==='i' ? ' qsl-i' : '') + (b.type==='ins' ? ' qsl-ins' : '');
+      if(b.type === 'ins'){
+        const s = document.createElement('strong'); s.textContent = 'Instructions:';
+        el.appendChild(s); el.appendChild(document.createTextNode(' '));
+      }
+      b.parts.forEach(p=>{
+        if(typeof p === 'string'){ el.appendChild(document.createTextNode(p)); return; }
+        const f = document.createElement('span');
+        f.className = 'qsl-blank';
+        f.dataset.i = p.id;
+        f.dataset.hint = p.hint;
+        f.setAttribute('role','textbox');
+        f.setAttribute('aria-multiline','false');
+        f.setAttribute('aria-label', p.hint);
+        f.textContent = qsl.v[p.id] || '';
+        el.appendChild(f);
+      });
+    }
+    wrap.appendChild(el);
+  });
+}
+function qslApplyLock(){
+  const wrap = document.getElementById('qsl-letter');
+  wrap.classList.toggle('locked', qsl.locked);
+  wrap.querySelectorAll('.qsl-blank').forEach(f=>{
+    f.setAttribute('contenteditable', qsl.locked ? 'false' : 'true');
+    if(qsl.locked) f.removeAttribute('tabindex'); else f.setAttribute('tabindex','0');
+  });
+}
+
+/* ---- progress + banner ---- */
+function qslRefresh(){
+  const filled = qslFilled();
+  const all = filled === QSL_TOTAL;
+  document.getElementById('qsl-prog-text').textContent = filled + ' of ' + QSL_TOTAL + ' blanks filled';
+  document.getElementById('qsl-bar-fill').style.width = (QSL_TOTAL ? (filled/QSL_TOTAL*100) : 0) + '%';
+  QSL_SECTIONS.forEach((s,i)=>{
+    const c = document.getElementById('qsl-sec-' + i);
+    if(!c) return;
+    const n = s.ids.filter(id=>qslVal(id)).length;
+    c.textContent = n + ' / ' + s.ids.length;
+    c.classList.toggle('met', n === s.ids.length);
+  });
+  qslRenderBanner(filled, all);
+}
+function qslRenderBanner(filled, all){
+  let state = 'none';
+  if(qsl.locked) state = 'locked';
+  else if(all) state = 'ready';
+  else if(qsl.done) state = 'editing:' + (QSL_TOTAL - filled);
+  if(state === qslBannerKey) return;
+  qslBannerKey = state;
+  const b = document.getElementById('qsl-banner');
+  if(state === 'locked'){
+    b.innerHTML =
+      '<div class="bt">Your letter is complete.</div>' +
+      '<p class="bp">Read it aloud each morning, slowly, as if she is already here. It stays exactly as you wrote it unless you choose to edit it.</p>' +
+      '<div class="btn-row">' +
+      '<button class="btn" onclick="qslDownload(\'docx\')">Download .docx</button>' +
+      '<button class="btn-outline" onclick="qslDownload(\'txt\')">Download .txt</button>' +
+      '<button class="btn-outline" onclick="qslCopy()">Copy letter</button>' +
+      '<button class="btn-outline" onclick="qslEdit()">Edit my letter</button>' +
+      '</div>';
+  } else if(state === 'ready'){
+    b.innerHTML =
+      '<div class="bt">Every blank is filled.</div>' +
+      '<p class="bp">' + (qsl.done ? 'Save your changes to lock the letter back in.' : 'Finish your letter to lock it in as your completed Quantum Self Letter. You can unlock it to edit whenever you choose.') + '</p>' +
+      '<div class="btn-row">' +
+      '<button class="btn" onclick="qslFinish()">' + (qsl.done ? 'Save changes &amp; lock' : 'Finish my letter') + '</button>' +
+      '<button class="btn-outline" onclick="qslDownload(\'docx\')">Download .docx</button>' +
+      '<button class="btn-outline" onclick="qslDownload(\'txt\')">Download .txt</button>' +
+      '</div>';
+  } else if(state.indexOf('editing') === 0){
+    const left = QSL_TOTAL - filled;
+    b.innerHTML =
+      '<div class="bt">You\'re editing your letter.</div>' +
+      '<p class="bp">' + left + ' blank' + (left===1?' is':'s are') + ' empty. Fill ' + (left===1?'it':'them') + ' to lock the letter back in. Changes save as you type.</p>';
+  } else {
+    b.innerHTML = '';
+  }
+}
+
+/* ---- actions ---- */
+function qslFinish(){
+  if(qslFilled() < QSL_TOTAL){ showToast('Fill every blank first.'); return; }
+  qsl.locked = true; qsl.done = true;
+  qslPersist(); qslApplyLock(); qslRefresh();
+  showToast('Your Quantum Self Letter is complete and saved.');
+  document.getElementById('panel-qsl').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function qslEdit(){
+  qsl.locked = false;
+  qslPersist(); qslApplyLock(); qslRefresh();
+  showToast('Editing on. Your changes save as you type.');
+  const first = document.querySelector('#qsl-letter .qsl-blank');
+  if(first) first.focus();
+}
+function qslReset(){
+  if(!confirm('Clear your entire Quantum Self Letter and start over? This can\'t be undone.')) return;
+  qsl = {v:{}, locked:false, done:false, updated:null};
+  qslBannerKey = '';
+  qslBuild(); qslApplyLock(); qslPersist(); qslRefresh(); qslSavedLabel(true);
+  document.getElementById('qsl-saved').textContent = 'Saves automatically';
+  showToast('Letter cleared.');
+}
+
+/* ---- export ---- */
+function qslTextOf(parts){ return parts.map(p=> typeof p==='string' ? p : qslVal(p.id)).join(''); }
+function qslToTxt(){
+  const out = [];
+  QSL_BLOCKS.forEach(b=>{
+    const t = qslTextOf(b.parts);
+    out.push(b.type==='ins' ? 'Instructions: ' + t : t);
+  });
+  return out.join('\n\n') + '\n';
+}
+function qslRunXml(text, o){
+  o = o || {};
+  const rpr = '<w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Georgia"/>' +
+    (o.bold ? '<w:b/>' : '') + (o.italic ? '<w:i/>' : '') +
+    (o.color ? '<w:color w:val="' + o.color + '"/>' : '') +
+    '<w:sz w:val="' + (o.size || 24) + '"/></w:rPr>';
+  return '<w:r>' + rpr + '<w:t xml:space="preserve">' + escapeXml(text) + '</w:t></w:r>';
+}
+function qslParaXml(runs, o){
+  o = o || {};
+  const ppr = '<w:pPr>' + (o.keepNext ? '<w:keepNext/>' : '') +
+    '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after || 200) + '" w:line="340" w:lineRule="auto"/>' +
+    (o.center ? '<w:jc w:val="center"/>' : '') +
+    (o.outline ? '<w:outlineLvl w:val="1"/>' : '') + '</w:pPr>';
+  return '<w:p>' + ppr + runs + '</w:p>';
+}
+async function qslBuildDocx(){
+  if(typeof JSZip === 'undefined') return null;
+  const CONTENT_TYPES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+    '<Default Extension="xml" ContentType="application/xml"/>'+
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'+
+    '</Types>';
+  const RELS = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'+
+    '</Relationships>';
+  const ACCENT = '5B46C4';
+  let body = '';
+  QSL_BLOCKS.forEach(b=>{
+    const t = qslTextOf(b.parts);
+    if(b.type === 'title'){
+      body += qslParaXml(qslRunXml(t, {bold:true, size:36, color:ACCENT}), {center:true, after:280});
+    } else if(b.type === 'ins'){
+      body += qslParaXml(qslRunXml('Instructions:', {bold:true}) + qslRunXml(' ' + t), {after:300});
+    } else if(b.type === 'h'){
+      body += qslParaXml(qslRunXml(t, {bold:true, size:28, color:ACCENT}), {before:420, after:140, keepNext:true, outline:true});
+    } else if(b.type === 'i'){
+      body += qslParaXml(qslRunXml(t, {italic:true}), {after:160});
+    } else {
+      body += qslParaXml(qslRunXml(t), {after:200});
+    }
+  });
+  const sectPr = '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr>';
+  const documentXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + body + sectPr + '</w:body></w:document>';
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', CONTENT_TYPES);
+  zip.file('_rels/.rels', RELS);
+  zip.file('word/document.xml', documentXml);
+  return await zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+async function qslDownload(format){
+  if(qslFilled() < QSL_TOTAL){ showToast('Fill every blank first.'); return; }
+  const txtBlob = ()=> new Blob([qslToTxt()], {type:'text/plain;charset=utf-8'});
+  if(format === 'txt'){ downloadBlob(txtBlob(), 'quantum-self-letter.txt'); return; }
+  const blob = await qslBuildDocx();
+  if(!blob){
+    showToast('The .docx tool didn\'t load, downloading as .txt instead.');
+    downloadBlob(txtBlob(), 'quantum-self-letter.txt');
+    return;
+  }
+  downloadBlob(blob, 'quantum-self-letter.docx');
+}
+async function qslCopy(){
+  try{
+    await navigator.clipboard.writeText(qslToTxt());
+    showToast('Letter copied.');
+  }catch(e){
+    showToast('Copy isn\'t available here. Use the download instead.');
+  }
+}
+
+/* ---- field behaviour ---- */
+function qslFocusEnd(el){
+  el.focus();
+  try{
+    const r = document.createRange(); r.selectNodeContents(el); r.collapse(false);
+    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  }catch(e){}
+}
+function qslNextBlank(el){
+  const all = Array.from(document.querySelectorAll('#qsl-letter .qsl-blank'));
+  const n = all[all.indexOf(el) + 1];
+  if(n) qslFocusEnd(n);
+}
+(function qslWire(){
+  const wrap = document.getElementById('qsl-letter');
+  const isBlank = e => e.target && e.target.classList && e.target.classList.contains('qsl-blank');
+  wrap.addEventListener('input', e=>{
+    if(!isBlank(e) || qsl.locked) return;
+    const el = e.target;
+    if(!el.textContent.trim() && el.innerHTML !== '') el.innerHTML = '';
+    qsl.v[el.dataset.i] = el.textContent.replace(/\s*[\r\n]+\s*/g,' ');
+    qslQueueSave();
+    qslRefresh();
+  });
+  wrap.addEventListener('beforeinput', e=>{
+    if(!isBlank(e)) return;
+    if(e.inputType === 'insertParagraph' || e.inputType === 'insertLineBreak'){
+      e.preventDefault(); qslNextBlank(e.target);
+    }
+  });
+  wrap.addEventListener('keydown', e=>{
+    if(!isBlank(e)) return;
+    if(e.key === 'Enter'){ e.preventDefault(); qslNextBlank(e.target); return; }
+    if((e.ctrlKey || e.metaKey) && ['b','i','u'].indexOf(e.key.toLowerCase()) > -1) e.preventDefault();
+  });
+  wrap.addEventListener('paste', e=>{
+    if(!isBlank(e) || qsl.locked) return;
+    e.preventDefault();
+    const t = ((e.clipboardData || window.clipboardData).getData('text') || '').replace(/\s*[\r\n]+\s*/g,' ');
+    document.execCommand('insertText', false, t);
+  });
+  wrap.addEventListener('drop', e=>{ if(isBlank(e)) e.preventDefault(); });
+  wrap.addEventListener('focusout', ()=>{ if(qslDirty) qslPersist(); });
+  window.addEventListener('pagehide', ()=>{ if(qslDirty) qslPersist(); });
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden && qslDirty) qslPersist(); });
+})();
+
+qslLoad();
+qslBuild();
+qslApplyLock();
+qslRefresh();
+qslSavedLabel(true);
+
 /* ================= boot ================= */
 (function buildStars(){
   const wrap = document.getElementById('stars');
@@ -808,3 +1314,5 @@ if(!storageOk){ showToast('Your browser storage seems unavailable. Entries won\'
 </script>
 </body>
 </html>
+
+</body></html>
